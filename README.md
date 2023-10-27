@@ -101,7 +101,7 @@ xhost +local:
 ## 2. dockerコンテナにアタッチする
 
 ~~~
-sudo docker exec -it limo_foxy_dev bash
+sudo docker exec -it limo_humble_dev bash
 ~~~
 
 dockerコンテナ内のrootユーザーとしてのプロンプトが開く。（root@agilex:~/ros2_ws#と表示される）
@@ -143,7 +143,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
 
 
-## 4. 地図作成(Cartographer)
+## 4. 地図作成(Slam_toolbox)
 
 まずLIMO本体とROS2を繋ぐベースノードを起動する。
 
@@ -158,7 +158,7 @@ ros2 launch limo_bringup limo_start.launch.py
 別のプロンプトで
 
 ~~~
-ros2 launch limo_bringup cartographer.launch.py
+ros2 launch limo_bringup slam_toolbox.launch.py
 ~~~
 
 続いてキーボード操作で速度指令トピックを送るノードを起動する。
