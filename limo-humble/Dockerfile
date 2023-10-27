@@ -49,7 +49,7 @@ RUN git clone https://github.com/YDLIDAR/YDLidar-SDK.git &&\
 RUN mkdir -p /root/ros2_ws/src/ && \
     . /opt/ros/humble/setup.sh && \
     cd /root/ros2_ws/src && \
-    git clone -b foxy https://github.com/agilexrobotics/limo_ros2.git && \
+    git clone -b humble-dev https://github.com/TechShare-inc/limo_ros2.git && \
     cd /root/ros2_ws && \
     colcon build && \
     bash /root/ros2_ws/install/setup.bash
