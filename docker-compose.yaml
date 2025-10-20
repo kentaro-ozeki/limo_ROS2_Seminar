@@ -1,20 +1,23 @@
 version: '3'
+
 services:
-        limo_humble:
-                network_mode: host
-                volumes:
-                        - '/dev:/dev'
-                        - '/tmp/.X11-unix:/tmp/.X11-unix'
-                privileged: true
-                environment:
-                        - "XAUTHORITY=$AUTH"
-                        - "LIBGL_ALWAYS_SOFTWARE=1"
-                        - "DISPLAY=$DISPLAY"
-                        - "AUTH=$AUTH"
-                device_cgroup_rules:
-                        - "a *:* rmw"
-                tty: true
-                runtime: nvidia
-                build: ./limo-humble
-                image: limo-humble
-                container_name: limo_humble_dev
+  limo_humble:
+    network_mode: host
+    volumes:
+      - '/dev:/dev'                    # ← 全デバイスを共有（必須）
+      - '/dev/bus/usb:/dev/bus/usb'    # ← USBバスを明示的にマウント
+      - '/tmp/.X11-unix:/tmp/.X11-unix'
+    privileged: true
+    environment:
+      - "XAUTHORITY=$AUTH"
+      - "LIBGL_ALWAYS_SOFTWARE=1"
+      - "DISPLAY=$DISPLAY"
+      - "AUTH=$AUTH"
+    device_cgroup_rules:
+      - 'c 189:* rmw'   # USBデバイス（Video Class等）のアクセス許可
+      - 'c 81:* rmw'    # Video4Linux (V4L2) カメラデバイス向け
+    tty: true
+    runtime: nvidia
+    build: ./limo-humble
+    image: limo-humble
+    container_name: limo_humble_dev
