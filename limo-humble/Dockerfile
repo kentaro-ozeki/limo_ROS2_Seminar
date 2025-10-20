@@ -4,7 +4,7 @@ FROM ros:humble as dev
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root/agilex_ws/
 
-# 必要なキーの取得とパッケージインストール
+# 必要なパッケージインストール
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 42D5A192B819C5DA \
     && apt-get update \
     && apt-get install -qq -y --no-install-recommends \
@@ -66,14 +66,14 @@ RUN cd /root/agilex_ws/src && \
     cmake .. && make -j$(nproc) && make install && \
     cd .. && pip3 install . && cd /root/agilex_ws/src && rm -rf YDLidar-SDK
 
-# ROS2 ワークスペースの作成、リポジトリ取得、ビルド
-RUN cd /root/agilex_ws/src && \
+# ROS2 ワークスペース作成、リポジトリ取得、ビルド (Bashで実行)
+RUN bash -c "cd /root/agilex_ws/src && \
     git clone -b humble-dev https://github.com/TechShare-inc/limo_ros2.git && \
     git clone -b master https://github.com/orbbec/ros2_astra_camera.git && \
     cd /root/agilex_ws && \
-    . /opt/ros/humble/setup.bash && \
-    colcon build --symlink-install
+    source /opt/ros/humble/setup.bash && \
+    colcon build --symlink-install"
 
-# bash ログイン時に ROS とワークスペースをソースする
+# bash ログイン時に ROS2 とワークスペースを自動で source
 RUN echo "source /opt/ros/humble/setup.bash" >> /etc/bash.bashrc && \
     echo "source /root/agilex_ws/install/setup.bash" >> /etc/bash.bashrc
