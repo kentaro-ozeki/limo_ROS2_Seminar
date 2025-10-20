@@ -73,7 +73,7 @@ RUN cd /root/agilex_ws/src && \
 # ワークスペース作成、リポジトリ取得、ビルド
 RUN cd /root/agilex_ws/src && \
     git clone -b humble-dev https://github.com/TechShare-inc/limo_ros2.git && \
-    git clone -b humble https://github.com/orbbec/ros2_astra_camera.git && \
+    git clone -b https://github.com/orbbec/ros2_astra_camera.git && \
     cd /root/agilex_ws && \
     source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install && \
