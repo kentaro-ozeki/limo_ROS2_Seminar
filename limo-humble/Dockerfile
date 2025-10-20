@@ -1,3 +1,4 @@
+# ベースイメージ
 FROM ros:humble as dev
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -38,46 +39,40 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 42D5A192B819C5DA \
         ros-humble-turtlesim \
         ros-humble-examples-rclpy-minimal-publisher \
         ros-humble-examples-rclpy-minimal-subscriber \
+        # ROS2 カメラ関連パッケージ
         ros-humble-camera-info-manager \
         ros-humble-image-geometry \
         ros-humble-image-publisher \
         ros-humble-cv-bridge \
         ros-humble-image-transport \
+        # 追加依存パッケージ
         libgflags-dev \
         libgoogle-glog-dev \
         libeigen3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# libuvc のビルドとインストール (/root/agilex_ws/src 内)
+# libuvc のビルドとインストール
 RUN mkdir -p /root/agilex_ws/src && \
     cd /root/agilex_ws/src && \
     git clone https://github.com/libuvc/libuvc.git && \
-    cd libuvc && \
-    mkdir build && cd build && \
-    cmake .. && \
-    make -j$(nproc) && \
-    make install && \
-    ldconfig && \
+    cd libuvc && mkdir build && cd build && \
+    cmake .. && make -j$(nproc) && make install && ldconfig && \
     cd /root/agilex_ws/src && rm -rf libuvc
 
-# YDLidar-SDK をビルドして pip インストール
+# YDLidar-SDK のビルドと pip インストール
 RUN cd /root/agilex_ws/src && \
     git clone https://github.com/YDLIDAR/YDLidar-SDK.git && \
     mkdir -p YDLidar-SDK/build && cd YDLidar-SDK/build && \
-    cmake .. && \
-    make -j$(nproc) && \
-    make install && \
-    cd .. && pip3 install . && \
-    cd /root/agilex_ws/src && rm -rf YDLidar-SDK
+    cmake .. && make -j$(nproc) && make install && \
+    cd .. && pip3 install . && cd /root/agilex_ws/src && rm -rf YDLidar-SDK
 
-# ワークスペース作成、リポジトリ取得、ビルド
+# ROS2 ワークスペースの作成、リポジトリ取得、ビルド
 RUN cd /root/agilex_ws/src && \
     git clone -b humble-dev https://github.com/TechShare-inc/limo_ros2.git && \
-    git clone https://github.com/orbbec/ros2_astra_camera.git && \
+    git clone -b master https://github.com/orbbec/ros2_astra_camera.git && \
     cd /root/agilex_ws && \
-    source /opt/ros/humble/setup.bash && \
-    colcon build --symlink-install && \
-    bash /root/agilex_ws/install/setup.bash
+    . /opt/ros/humble/setup.bash && \
+    colcon build --symlink-install
 
 # bash ログイン時に ROS とワークスペースをソースする
 RUN echo "source /opt/ros/humble/setup.bash" >> /etc/bash.bashrc && \
